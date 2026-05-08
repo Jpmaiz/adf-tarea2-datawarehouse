@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-ucb-dw-pai-4536427"
+		},
+		"ls_datalake_vacuna_connectionString": {
+			"value": ""
+		},
+		"ls_sql_dw_pai_password": {
+			"value": ""
+		},
+		"ls_sql_dw_pai_properties_typeProperties_server": {
+			"value": "sql-ucb-sisger-pai-4536427.database.windows.net"
+		},
+		"ls_sql_dw_pai_properties_typeProperties_database": {
+			"value": "dw_pai_bolivia"
+		},
+		"ls_sql_dw_pai_properties_typeProperties_userName": {
+			"value": "adminpai"
+		}
+	}
+}
