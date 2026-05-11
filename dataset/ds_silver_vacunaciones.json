@@ -1,0 +1,15 @@
+{
+	"name": "ds_silver_vacunaciones",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_pai",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
