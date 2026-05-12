@@ -39,6 +39,9 @@
 				},
 				{
 					"name": "select3"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -202,7 +205,8 @@
 				"          via_administracion = via_aplicacion",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3"
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select1 derive(fecha_nacimiento = toDate(fecha_nacimiento, 'yyyy-MM-dd')) ~> derivedColumn1"
 			]
 		}
 	}
