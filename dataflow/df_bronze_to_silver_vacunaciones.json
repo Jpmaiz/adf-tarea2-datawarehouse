@@ -164,7 +164,6 @@
 				"          fecha_nacimiento = patient_birth_date,",
 				"          departamento = patient_department,",
 				"          municipio_residencia = patient_municipality,",
-				"          patient_community,",
 				"          comunidad_indigena = patient_indigenous,",
 				"          fecha_vacunacion = vaccination_date,",
 				"          vacuna_id = vaccine_code,",
