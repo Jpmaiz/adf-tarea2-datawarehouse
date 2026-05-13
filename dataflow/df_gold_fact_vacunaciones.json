@@ -45,6 +45,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "ds_gold_fact_vacunaciones",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -203,8 +207,30 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          vacunacion_key as integer,",
+				"          id_registro as string,",
+				"          fecha_key as integer,",
+				"          vacuna_key as integer,",
+				"          establecimiento_key as integer,",
+				"          ubicacion_key as integer,",
+				"          cod_paciente as string,",
+				"          genero as string,",
+				"          edad_dias as integer,",
+				"          pueblo_indigena as string,",
+				"          nro_dosis as string,",
+				"          nro_lote as string,",
+				"          temp_conservacion as decimal(10,2),",
+				"          via_aplicacion as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
