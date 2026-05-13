@@ -13,8 +13,7 @@
 		"schema": [
 			{
 				"name": "municipio_id",
-				"type": "int",
-				"precision": 10
+				"type": "varchar"
 			},
 			{
 				"name": "municipio_nombre",

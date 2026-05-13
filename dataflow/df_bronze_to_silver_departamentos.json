@@ -49,7 +49,7 @@
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          municipio_id as integer,",
+				"          municipio_id as string,",
 				"          municipio_nombre as string,",
 				"          departamento as string,",
 				"          codigo_departamento as string,",
