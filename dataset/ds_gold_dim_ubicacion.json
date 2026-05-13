@@ -1,0 +1,54 @@
+{
+	"name": "ds_gold_dim_ubicacion",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_pai",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ubicacion_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "municipio_id",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio_nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "codigo_departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "zona_geografica",
+				"type": "varchar"
+			},
+			{
+				"name": "es_capital_departamental",
+				"type": "bit"
+			},
+			{
+				"name": "poblacion_depto_estimada",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_ubicacion"
+		}
+	}
+}

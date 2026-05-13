@@ -1,0 +1,84 @@
+{
+	"name": "ds_gold_fact_vacunaciones",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_pai",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "vacunacion_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "id_registro",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "vacuna_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "establecimiento_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ubicacion_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "cod_paciente",
+				"type": "varchar"
+			},
+			{
+				"name": "genero",
+				"type": "char"
+			},
+			{
+				"name": "edad_dias",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "pueblo_indigena",
+				"type": "varchar"
+			},
+			{
+				"name": "nro_dosis",
+				"type": "varchar"
+			},
+			{
+				"name": "nro_lote",
+				"type": "varchar"
+			},
+			{
+				"name": "temp_conservacion",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "via_aplicacion",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "fact_vacunaciones"
+		}
+	}
+}
