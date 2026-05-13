@@ -1,0 +1,71 @@
+{
+	"name": "df_gold_dim_tiempo",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_vacunaciones",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_tiempo",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          fecha_key as integer,",
+				"          fecha as date,",
+				"          dia_semana as integer,",
+				"          nombre_dia as string,",
+				"          dia_mes as integer,",
+				"          mes as integer,",
+				"          nombre_mes as string,",
+				"          trimestre as integer,",
+				"          anio as integer,",
+				"          es_fin_semana as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT DISTINCT\\n    CAST(CONVERT(VARCHAR(8), CAST(fec_vacunacion AS DATE), 112) AS INT) AS fecha_key,\\n    CAST(fec_vacunacion AS DATE) AS fecha,\\n    DATEPART(WEEKDAY, fec_vacunacion) AS dia_semana,\\n    DATENAME(WEEKDAY, fec_vacunacion) AS nombre_dia,\\n    DAY(fec_vacunacion) AS dia_mes,\\n    MONTH(fec_vacunacion) AS mes,\\n    DATENAME(MONTH, fec_vacunacion) AS nombre_mes,\\n    DATEPART(QUARTER, fec_vacunacion) AS trimestre,\\n    YEAR(fec_vacunacion) AS anio,\\n    CASE \\n        WHEN DATEPART(WEEKDAY, fec_vacunacion) IN (6, 7) THEN 1\\n        ELSE 0\\n    END AS es_fin_semana\\nFROM silver.vacunaciones\\nWHERE fec_vacunacion IS NOT NULL',",
+				"     format: 'query') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          fecha_key as integer,",
+				"          fecha as date,",
+				"          dia_semana as integer,",
+				"          nombre_dia as string,",
+				"          dia_mes as integer,",
+				"          mes as integer,",
+				"          nombre_mes as string,",
+				"          trimestre as integer,",
+				"          anio as integer,",
+				"          es_fin_semana as boolean",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
