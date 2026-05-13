@@ -1,0 +1,83 @@
+{
+	"name": "df_gold_dim_vacunas",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_vacunas",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_vacuna",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          enfermedad_previene as string,",
+				"          grupo_pai as string,",
+				"          numero_dosis as integer,",
+				"          dosis_descripcion as string,",
+				"          edad_aplicacion_descripcion as string,",
+				"          via_administracion as string,",
+				"          sitio_aplicacion as string,",
+				"          condicion_especial as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT DISTINCT\\n    vacuna_id,\\n    vacuna_nombre,\\n    enfermedad_previene,\\n    grupo_pai,\\n    numero_dosis,\\n    dosis_descripcion,\\n    edad_aplicacion_descripcion,\\n    via_administracion,\\n    sitio_aplicacion,\\n    condicion_especial\\nFROM silver.vacunas\\nWHERE vacuna_id IS NOT NULL',",
+				"     format: 'query') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          vacuna_key as integer,",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          enfermedad_previene as string,",
+				"          grupo_pai as string,",
+				"          numero_dosis as string,",
+				"          dosis_descripcion as string,",
+				"          edad_aplicacion_descripcion as string,",
+				"          via_administracion as string,",
+				"          sitio_aplicacion as string,",
+				"          condicion_especial as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          vacuna_id,",
+				"          vacuna_nombre,",
+				"          enfermedad_previene,",
+				"          grupo_pai,",
+				"          dosis_descripcion,",
+				"          edad_aplicacion_descripcion,",
+				"          via_administracion,",
+				"          sitio_aplicacion,",
+				"          condicion_especial",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
