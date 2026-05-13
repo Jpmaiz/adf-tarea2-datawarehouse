@@ -29,7 +29,15 @@
 					"name": "LaPaz"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_vacunaciones",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "select1"
@@ -42,6 +50,36 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "derivedColumn6"
+				},
+				{
+					"name": "derivedColumn7"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "union2"
+				},
+				{
+					"name": "derivedColumn8"
+				},
+				{
+					"name": "select4"
 				}
 			],
 			"scriptLines": [
@@ -206,7 +244,95 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select3",
-				"select1 derive(fecha_nacimiento = toDate(fecha_nacimiento, 'yyyy-MM-dd')) ~> derivedColumn1"
+				"select1 derive(fecha_nacimiento =  toDate(toString(fecha_nacimiento), 'dd/MM/yyyy'),",
+				"          fecha_vacunacion = iif(\r",
+				"  startsWith(trim(toString(fecha_vacunacion)), '00/'),\r",
+				"  toDate(null()),\r",
+				"  toDate(trim(toString(fecha_vacunacion)), 'dd/MM/yyyy')\r",
+				")) ~> derivedColumn1",
+				"select2 derive(fecha_nacimiento = toDate(toString(fecha_nacimiento), 'yyyy-MM-dd'),",
+				"          fecha_vacunacion = toDate(substring(toString(fecha_vacunacion), 1, 10), 'yyyy-MM-dd')) ~> derivedColumn2",
+				"select3 derive(fecha_nacimiento = toDate(toString(fecha_nacimiento), 'dd/MM/yyyy'),",
+				"          fecha_vacunacion = toDate(toString(fecha_vacunacion), 'dd/MM/yyyy')) ~> derivedColumn3",
+				"derivedColumn3 derive(sexo = case(   upper(trim(toString(sexo))) == 'MASCULINO', 'M',   upper(trim(toString(sexo))) == 'FEMENINO', 'F',   upper(trim(toString(sexo))) == 'M', 'M',   upper(trim(toString(sexo))) == 'F', 'F',   'NO ESPECIFICADO' )) ~> derivedColumn4",
+				"derivedColumn1 derive(comunidad_indigena = case(   upper(trim(toString(comunidad_indigena))) == 'SÍ', 'SI',   upper(trim(toString(comunidad_indigena))) == 'SI', 'SI',   upper(trim(toString(comunidad_indigena))) == 'TRUE', 'SI',   upper(trim(toString(comunidad_indigena))) == '✔', 'SI',   upper(trim(toString(comunidad_indigena))) == '✓', 'SI',   upper(trim(toString(comunidad_indigena))) == 'NO', 'NO',   upper(trim(toString(comunidad_indigena))) == 'FALSE', 'NO',   upper(trim(toString(comunidad_indigena))) == '✘', 'NO',   upper(trim(toString(comunidad_indigena))) == '✗', 'NO',   'NO ESPECIFICADO' ),",
+				"          numero_dosis = trim(toString(numero_dosis)),",
+				"          temperatura_conservacion = trim(toString(temperatura_conservacion)),",
+				"          edad_dias_aplicacion = trim(toString(edad_dias_aplicacion))) ~> derivedColumn5",
+				"derivedColumn2 derive(comunidad_indigena = case(   upper(trim(toString(comunidad_indigena))) == 'SÍ', 'SI',   upper(trim(toString(comunidad_indigena))) == 'SI', 'SI',   upper(trim(toString(comunidad_indigena))) == 'TRUE', 'SI',   upper(trim(toString(comunidad_indigena))) == '✔', 'SI',   upper(trim(toString(comunidad_indigena))) == '✓', 'SI',   upper(trim(toString(comunidad_indigena))) == 'NO', 'NO',   upper(trim(toString(comunidad_indigena))) == 'FALSE', 'NO',   upper(trim(toString(comunidad_indigena))) == '✘', 'NO',   upper(trim(toString(comunidad_indigena))) == '✗', 'NO',   'NO ESPECIFICADO' ),",
+				"          edad_dias_aplicacion = trim(toString(edad_dias_aplicacion)),",
+				"          temperatura_conservacion = trim(toString(temperatura_conservacion)),",
+				"          numero_dosis = trim(toString(numero_dosis))) ~> derivedColumn6",
+				"derivedColumn4 derive(comunidad_indigena = case(   upper(trim(toString(comunidad_indigena))) == 'SÍ', 'SI',   upper(trim(toString(comunidad_indigena))) == 'SI', 'SI',   upper(trim(toString(comunidad_indigena))) == 'TRUE', 'SI',   upper(trim(toString(comunidad_indigena))) == '✔', 'SI',   upper(trim(toString(comunidad_indigena))) == '✓', 'SI',   upper(trim(toString(comunidad_indigena))) == 'NO', 'NO',   upper(trim(toString(comunidad_indigena))) == 'FALSE', 'NO',   upper(trim(toString(comunidad_indigena))) == '✘', 'NO',   upper(trim(toString(comunidad_indigena))) == '✗', 'NO',   'NO ESPECIFICADO' ),",
+				"          numero_dosis = trim(toString(numero_dosis)),",
+				"          temperatura_conservacion = trim(toString(temperatura_conservacion)),",
+				"          edad_dias_aplicacion = trim(toString(edad_dias_aplicacion))) ~> derivedColumn7",
+				"derivedColumn5, derivedColumn6 union(byName: true)~> union1",
+				"union1, derivedColumn7 union(byName: true)~> union2",
+				"union2 derive(fecha_nacimiento = iif(isNull(fecha_nacimiento) || trim(toString(fecha_nacimiento)) == '', 'SIN FECHA', trim(toString(fecha_nacimiento))),",
+				"          fecha_vacunacion = iif(isNull(fecha_vacunacion) || trim(toString(fecha_vacunacion)) == '', 'SIN FECHA', trim(toString(fecha_vacunacion))),",
+				"          ci_paciente = iif(   isNull(ci_paciente) || trim(toString(ci_paciente)) == '',   'SIN CI',   upper(trim(toString(ci_paciente))) )) ~> derivedColumn8",
+				"derivedColumn8 select(mapColumn(",
+				"          id_registro = registro_id,",
+				"          cod_paciente = paciente_id,",
+				"          ci_paciente,",
+				"          nombre_paciente,",
+				"          apellido_paterno,",
+				"          apellido_materno,",
+				"          genero = sexo,",
+				"          fec_nacimiento = fecha_nacimiento,",
+				"          municipio_residencia,",
+				"          pueblo_indigena = comunidad_indigena,",
+				"          fec_vacunacion = fecha_vacunacion,",
+				"          cod_vacuna = vacuna_id,",
+				"          desc_vacuna = vacuna_nombre,",
+				"          nro_dosis = numero_dosis,",
+				"          cod_establecimiento = establecimiento_id,",
+				"          desc_establecimiento = nombre_establecimiento,",
+				"          departamento,",
+				"          nro_lote = lote_vacuna,",
+				"          temp_conservacion = temperatura_conservacion,",
+				"          edad_dias = edad_dias_aplicacion,",
+				"          via_aplicacion = via_administracion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"select4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id_registro as string,",
+				"          origen as string,",
+				"          cod_paciente as string,",
+				"          genero as string,",
+				"          fec_nacimiento as date,",
+				"          edad_dias as integer,",
+				"          municipio_residencia as string,",
+				"          pueblo_indigena as string,",
+				"          comunidad as string,",
+				"          fec_vacunacion as date,",
+				"          cod_vacuna as string,",
+				"          desc_vacuna as string,",
+				"          nro_dosis as integer,",
+				"          via_aplicacion as string,",
+				"          cod_establecimiento as string,",
+				"          desc_establecimiento as string,",
+				"          departamento as string,",
+				"          nro_lote as string,",
+				"          temp_conservacion as decimal(5,2),",
+				"          gps_latitud as decimal(9,6),",
+				"          gps_longitud as decimal(9,6),",
+				"          gps_precision_metros as decimal(8,2),",
+				"          observaciones as string,",
+				"          fecha_carga as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}

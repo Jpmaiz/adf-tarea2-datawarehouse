@@ -10,6 +10,119 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [
+			{
+				"name": "id_registro",
+				"type": "varchar"
+			},
+			{
+				"name": "origen",
+				"type": "varchar"
+			},
+			{
+				"name": "cod_paciente",
+				"type": "varchar"
+			},
+			{
+				"name": "genero",
+				"type": "char"
+			},
+			{
+				"name": "fec_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "edad_dias",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "municipio_residencia",
+				"type": "varchar"
+			},
+			{
+				"name": "pueblo_indigena",
+				"type": "varchar"
+			},
+			{
+				"name": "comunidad",
+				"type": "varchar"
+			},
+			{
+				"name": "fec_vacunacion",
+				"type": "date"
+			},
+			{
+				"name": "cod_vacuna",
+				"type": "varchar"
+			},
+			{
+				"name": "desc_vacuna",
+				"type": "varchar"
+			},
+			{
+				"name": "nro_dosis",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "via_aplicacion",
+				"type": "varchar"
+			},
+			{
+				"name": "cod_establecimiento",
+				"type": "varchar"
+			},
+			{
+				"name": "desc_establecimiento",
+				"type": "varchar"
+			},
+			{
+				"name": "departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "nro_lote",
+				"type": "varchar"
+			},
+			{
+				"name": "temp_conservacion",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "gps_latitud",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 6
+			},
+			{
+				"name": "gps_longitud",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 6
+			},
+			{
+				"name": "gps_precision_metros",
+				"type": "decimal",
+				"precision": 8,
+				"scale": 2
+			},
+			{
+				"name": "observaciones",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_carga",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "vacunaciones"
+		}
 	}
 }
