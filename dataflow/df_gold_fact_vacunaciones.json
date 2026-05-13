@@ -8,14 +8,203 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"name": "source1"
+					"dataset": {
+						"referenceName": "ds_silver_vacunaciones",
+						"type": "DatasetReference"
+					},
+					"name": "vacunaciones"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_vacuna",
+						"type": "DatasetReference"
+					},
+					"name": "dimvauna"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_establecimiento",
+						"type": "DatasetReference"
+					},
+					"name": "dimestablecimiento"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_ubicacion",
+						"type": "DatasetReference"
+					},
+					"name": "dimubicacion"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_tiempo",
+						"type": "DatasetReference"
+					},
+					"name": "dimtiempo"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
+				},
+				{
+					"name": "lookup4"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"source(output(",
+				"          id_registro as string,",
+				"          origen as string,",
+				"          cod_paciente as string,",
+				"          genero as string,",
+				"          fec_nacimiento as date,",
+				"          edad_dias as integer,",
+				"          municipio_residencia as string,",
+				"          pueblo_indigena as string,",
+				"          comunidad as string,",
+				"          fec_vacunacion as date,",
+				"          cod_vacuna as string,",
+				"          desc_vacuna as string,",
+				"          nro_dosis as integer,",
+				"          via_aplicacion as string,",
+				"          cod_establecimiento as string,",
+				"          desc_establecimiento as string,",
+				"          departamento as string,",
+				"          nro_lote as string,",
+				"          temp_conservacion as decimal(5,2),",
+				"          gps_latitud as decimal(9,6),",
+				"          gps_longitud as decimal(9,6),",
+				"          gps_precision_metros as decimal(8,2),",
+				"          observaciones as string,",
+				"          fecha_carga as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> vacunaciones",
+				"source(output(",
+				"          vacuna_key as integer,",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          enfermedad_previene as string,",
+				"          grupo_pai as string,",
+				"          numero_dosis as string,",
+				"          dosis_descripcion as string,",
+				"          edad_aplicacion_descripcion as string,",
+				"          via_administracion as string,",
+				"          sitio_aplicacion as string,",
+				"          condicion_especial as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimvauna",
+				"source(output(",
+				"          establecimiento_key as integer,",
+				"          establecimiento_id as string,",
+				"          nombre_establecimiento as string,",
+				"          tipo_establecimiento as string,",
+				"          nivel_atencion as string,",
+				"          zona as string,",
+				"          sedes as string,",
+				"          red_salud as string,",
+				"          departamento as string,",
+				"          municipio as string,",
+				"          latitud as decimal(10,6),",
+				"          longitud as decimal(10,6),",
+				"          tiene_cadena_frio as boolean,",
+				"          activo as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimestablecimiento",
+				"source(output(",
+				"          ubicacion_key as integer,",
+				"          municipio_id as string,",
+				"          municipio_nombre as string,",
+				"          departamento as string,",
+				"          codigo_departamento as string,",
+				"          zona_geografica as string,",
+				"          es_capital_departamental as boolean,",
+				"          poblacion_depto_estimada as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimubicacion",
+				"source(output(",
+				"          fecha_key as integer,",
+				"          fecha as date,",
+				"          dia_semana as integer,",
+				"          nombre_dia as string,",
+				"          dia_mes as integer,",
+				"          mes as integer,",
+				"          nombre_mes as string,",
+				"          trimestre as integer,",
+				"          anio as integer,",
+				"          es_fin_semana as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimtiempo",
+				"vacunaciones, dimvauna lookup(cod_vacuna == vacuna_id,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, dimestablecimiento lookup(cod_establecimiento == establecimiento_id,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2, dimubicacion lookup(municipio_residencia == municipio_nombre",
+				"     && vacunaciones@departamento == dimubicacion@departamento,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup3",
+				"derivedColumn1, dimtiempo lookup(derivedColumn1@fecha_key == dimtiempo@fecha_key,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup4",
+				"lookup3 derive(fecha_key = toInteger(replace(toString(fec_vacunacion), '-', ''))) ~> derivedColumn1",
+				"lookup4 select(mapColumn(",
+				"          id_registro,",
+				"          fecha_key = derivedColumn1@fecha_key,",
+				"          vacuna_key,",
+				"          establecimiento_key,",
+				"          ubicacion_key,",
+				"          cod_paciente,",
+				"          genero,",
+				"          edad_dias,",
+				"          pueblo_indigena,",
+				"          nro_dosis,",
+				"          nro_lote,",
+				"          temp_conservacion,",
+				"          via_aplicacion",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
